@@ -63,6 +63,14 @@ ScreenCaptureKit sağlayıcısı asenkron yükleme öncesinde, sonrasında ve ha
 
 Bu alt adım yalnız koordinasyon altyapısıdır. Çözümleyici henüz `LaunchViewModel` veya uygulama yaşam döngüsüne bağlanmadı; gerçek `SCShareableContent` çağrısı, EVE/Launcher çalıştırması, canlı pencere seçimi veya TCC izin turu yapılmadı.
 
+0.4d uygulamasında bu çözümleyici `LaunchViewModel` ile kompakt durum ekranına bağlanmıştır. Tek seferlik pencere çözümlemesi ancak süreç izleme oturumu açık, tam EVE oyun istemcisi önde ve taze Ekran Kaydı preflight sonucu izinli olduğunda başlar. Launcher-only, oyun kapalı, istemci belirsizliği, EVE'nin önde olmaması ve izin eksikliği durumlarında çözümleyici ya da gerçek ScreenCaptureKit sağlayıcısı çağrılmaz. Otomatik yol izin istemez; `CGRequest…` çağrıları yalnız kullanıcının ilgili **İzin İste** düğmesindedir.
+
+ViewModel, etkin isteği kendi oturum/istek kimliğiyle ve EVE süreç neslini PID + `launchDate` çiftiyle izler. Aynı PID başka bir açılışta yeniden kullanılsa dahi eski pencere seçimi yeni oyuna taşınmaz. EVE kapanır, değişir veya öndelik kaybederse etkin iş iptal edilir; geç tamamlanan eski sonuçlar yeni görevin durumunu temizleyemez. Snapshot sonrasında değişen süreç kimliği sıradan “pencere bulunamadı” değil, güvenli biçimde eski sonuç olarak gösterilir.
+
+Yardımcı uygulamanın kendi sahnesinin başka bir macOS Space'inde görünmemesi tek başına çözümlemeyi durdurmaz. Tam ekran EVE ayrı bir Space'te öndeyken yardımcı pencere görünmez olabileceğinden kapı, uygulamanın sahne görünürlüğü yerine EVE'nin gerçek öndelik durumuna bağlanmıştır. Bu karar yalnız tek seferlik metadata envanteri içindir; sürekli `SCStream` aşamasında arka plan, Space ve enerji politikası yeniden ele alınacaktır.
+
+İlk canlı 0.4d turunda kullanıcı yalnız EVE Launcher'ı açmıştır. Xcode'dan çalıştırılan güncel uygulama **Launcher Açık** durumunu göstermiş, gerçek oyun istemcisi bulunmadığı için pencere çözümleyicisine/`SCShareableContent` yoluna girmemiş ve macOS izin istemi açmamıştır. Gerçek normal, borderless ve tam ekran EVE pencere seçimi hâlâ canlı test beklemektedir.
+
 “Tam ekranda çalışır” hedefi ürüne dâhildir; ancak her oyun ve macOS sürümündeki tam ekran davranışı aynı olmadığından bu özellik gerçek EVE testi geçmeden tamamlanmış sayılmayacaktır.
 
 ## 5. Sol Command tetikleyicisi

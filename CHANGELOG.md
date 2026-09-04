@@ -2,6 +2,41 @@
 
 Bu dosya yalnızca tamamlanan ve doğrulanan değişiklikleri kaydeder. Planlanan özellikler değişiklik olarak yazılmaz.
 
+## Geliştirme aşaması 0.4d — 2026-09-04
+
+### Eklendi
+
+- Tek seferlik `EVEGameWindowResolver` için gerçek uygulama bileşimini ve `LaunchViewModel` yaşam döngüsü bağlantısını kuran üretim başlangıcı
+- Süreç izleme oturumu, tam EVE oyun istemcisi, öndelik ve taze Ekran Kaydı preflight sonucu birlikte geçmeden çözümleyiciyi çağırmayan kapılar
+- Bağlantı durumunda PID ile birlikte `launchDate` süreç neslini taşıma; etkin istek, önceki seçim, geç sonuç ve dönen seçimde aynı süreç neslini yeniden doğrulama
+- Tek EVE hazırlık satırında izin gereksinimi, öne getirme, arama, seçildi, oyun/istemci/pencere belirsizliği, eski kimlik, iptal ve genel hata durumları
+- Normal pencere için yalnız **Seçildi**, geometrik tam ekran sonucu için canlı test yapılmadığını belirten **tam ekran adayı** açıklaması
+
+### Güçlendirildi
+
+- Ekran Kaydı gereksinimi öndelik uyarısından önce değerlendirilir; gerekli izin, EVE satırında yanlışlıkla gizlenmez
+- EVE PID'si veya `launchDate` süreç nesli değişince etkin eski istek önce iptal edilir ve yeni süreç için tek bir çözümleme başlar
+- Eski isteğin geç tamamlanması yeni isteğin görev kaydını temizleyemez; stop sonrasındaki callback ve sonuçlar oturum kimliğiyle reddedilir
+- Snapshot sonrasındaki bütün uygulama kimliği değişiklikleri sıradan bekleme yerine eski/güvensiz sonuç olarak sınıflandırılır
+- Uygulamanın kendi sahnesi başka bir Space'te görünmüyor diye tek seferlik çözümleme durdurulmaz; tam ekran hedefi için belirleyici, EVE'nin gerçek öndelik durumudur
+- Pencere kimliği, PID, `launchDate`, geometri, ekran kimliği ve snapshot nesli arayüz veya erişilebilirlik metnine taşınmaz
+
+### Doğrulandı
+
+- Debug derlemesi, Xcode Analyze ve `SWIFT_VERSION=6` ile sıkı eşzamanlılık/uyarıları hata sayan tam proje derlemesi başarıyla tamamlandı.
+- Canlı sistem sağlayıcılarını binary dışında bırakan sahte bağımlılıklı Swift 6 harness'i; Launcher/oyun/izin/öndelik kapıları, single-flight, iptal, stop/eski oturum, PID değişimi, aynı PID + farklı `launchDate`, geç sonuç, izin kaybı, çalışma alanı değişikliği, sonuç eşlemeleri ve otomatik izin istememe dahil 36 senaryo ve 137/137 kontrolden geçti. Aynı binary dört ardışık turda aynı sonucu verdi.
+- Harness binary'sinde `SCShareableContent`, `CGRequestScreenCaptureAccess`, `CGRequestListenEventAccess`, `NSWorkspace` veya ScreenCaptureKit bağlantısı bulunmadığı doğrulandı; bütün testler sistem istemi ve gerçek ekran envanteri olmadan çalıştı.
+- İki bağımsız salt-okunur mimari/UI incelemesi engelleyici bulgu olmadan **GO** verdi; kaynak farkında pencere başlığı veya capture metadata günlüğü bulunmadı.
+- Kullanıcının açtığı gerçek EVE Launcher çalışırken güncel uygulama Xcode'dan başlatıldı. Erişilebilirlik ağacında EVE satırı **Launcher Açık** ve “Launcher açık; EVE oyun istemcisi bekleniyor” gösterdi; iki izin **Eksik** kaldı ve hiçbir izin istemi açılmadı.
+- Canlı süreç kontrolünde yalnız `eve-online` Launcher ile Xcode Debug `EVETranslateTR` işlemi görüldü; `EVE` oyun istemcisi çalışmadığından çözümleyici ve gerçek `SCShareableContent` yolu çağrılmadı.
+
+### Canlı doğrulama bekliyor
+
+- Gerçek EVE oyun istemcisi bu turda açılmadı; bu nedenle `SCShareableContent` ile canlı pencere envanteri, seçilmiş normal/borderless pencere ve geometrik tam ekran adayının arayüz sonucu henüz doğrulanmadı.
+- macOS Ekran Kaydı ve Giriş İzleme izin verme/reddetme turuna dokunulmadı; izinler kullanıcı düğmeleriyle ayrıca doğrulanacaktır.
+- Görüntü akışı, piksel yakalama, OCR, çeviri ve yan panel bu aşamanın parçası değildir.
+- Sürekli `SCStream` eklendiğinde macOS Space, uygulama gizleme, arka plan ve enerji politikası yeniden test edilecektir.
+
 ## Geliştirme aşaması 0.4c — 2026-09-04
 
 ### Eklendi

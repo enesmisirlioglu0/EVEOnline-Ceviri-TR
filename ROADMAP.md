@@ -52,7 +52,10 @@ Durum işaretleri:
 - ✅ Snapshot öncesinde ve sonrasında PID, paket kimliği, çalıştırılabilir adı, `launchDate`, sonlandırılmamış olma ve öndelik alanlarını yeniden doğrulayan tek seferlik pencere çözümleyicisini ekle
 - ✅ İstek ve gözlem oturumu kimlikleriyle yeni istek, açık/çağıran iptali, çalışma alanı değişikliği, geç snapshot sonucu ve eski callback durumlarını güvenli biçimde ayır
 - ✅ ScreenCaptureKit yüklemesi sırasında kaybolan izni açık izin sonucu olarak sınıflandır; iptal edilmiş snapshot neslini ilerletme ve süreç monitöründe eski `stop`/`start` callback'ini oturum kimliğiyle reddet
-- ⏳ Kullanıcı açıkça onayladığında `SCShareableContent` ile gerçek hedef pencere envanterini al ve sonucu arayüze bağla
+- ✅ Tek seferlik çözümleyiciyi `LaunchViewModel` ve tek EVE durum satırına bağla; izleme oturumu + öndeki tam EVE + taze Ekran Kaydı izni geçmeden çağırma
+- ✅ PID + `launchDate` süreç nesli, istek kimliği ve sonuç-sonu izin denetimiyle eski sonucu reddet; uygulama/pencere belirsizliği ile geometrik tam ekran adayını dürüst durumlara eşle
+- ✅ Launcher-only canlı turunda **Launcher Açık** durumunu, çözümleyici/ScreenCaptureKit çağrısına girmemeyi ve otomatik izin istememeyi doğrula
+- ⏳ Kullanıcı oyun istemcisine girdiğinde `SCShareableContent` ile gerçek hedef pencere envanterini al ve seçilen sonucu arayüzde canlı doğrula
 - ⏳ Launcher, giriş ve hesap pencerelerini canlı turda doğrula ve hassas ekran güvenlik kapısını tamamla
 - ⏳ Belirsizlik sürerse küçük kullanıcı seçimini ekle
 - ⏳ EVE arka plandayken ağır işlemleri durdur

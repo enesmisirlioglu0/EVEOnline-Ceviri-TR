@@ -2,7 +2,7 @@
 
 EVE Online Çeviri TR, macOS üzerinde çalışan yerel bir oyun ekranı çeviri yardımcısıdır. Öncelikli amacı, çalışan EVE Online istemcisini otomatik bulmak ve oyuncu sol Command tuşuna bastığında farenin yakınındaki İngilizce metni Türkçeye çevirip özgün İngilizce yazıyı kapatmadan yanında tek, okunaklı bir panelde göstermektir.
 
-> **Mevcut durum: Geliştirme aşaması 0.4c, eski asenkron sonuçlara dayanıklı pencere çözümleyici altyapısı hazır.** 0.4a'nın EVE süreç izleyicisi ile 0.4b'nin izin kapılı ScreenCaptureKit değer snapshot'ı ve saf pencere eşleştiricisine, snapshot öncesi/sonrası tam süreç kimliği doğrulaması yapan tek seferlik çözümleyici eklenmiştir. İptal edilen, yeni istekle geçersiz kalan veya çalışma alanı değişen sonuçlar kullanılmaz. Bu altyapı henüz uygulama yaşam döngüsüne bağlanmamış; gerçek `SCShareableContent` çağrısı, EVE/Launcher çalıştırması veya macOS izin istemi yapılmamıştır. Ekran yakalama akışı, sol Command tetikleyicisi, OCR, çeviri ve oyun yanında gösterilecek panel henüz uygulanmadı. Aşama numarası uygulamanın pazarlama sürümü değildir.
+> **Mevcut durum: Geliştirme aşaması 0.4d, izin ve süreç kimliği kapılı tek seferlik pencere çözümlemesi uygulamaya bağlandı.** `LaunchViewModel`, yalnız izleme oturumu açıkken, tam EVE oyun istemcisi öndeyken ve taze Ekran Kaydı kontrolü izinli olduğunda çözümleyiciyi çağırır. PID + `launchDate` ile ayırt edilen eski süreç sonuçları kullanılmaz. Xcode'daki canlı Launcher turunda uygulama **Launcher Açık** durumunu doğru göstermiş ve izin istemi açmamıştır. Oyun istemcisi henüz açılmadığı için gerçek `SCShareableContent` envanteri ve canlı pencere seçimi beklemektedir. Ekran yakalama akışı, sol Command tetikleyicisi, OCR, çeviri ve oyun yanında gösterilecek panel henüz uygulanmadı. Aşama numarası uygulamanın pazarlama sürümü değildir.
 
 ## Değişmez çalışma biçimi
 
@@ -27,13 +27,13 @@ Uygulamanın 420 × 680 punto boyutundaki ana penceresi i-Panel benzeri kompakt 
 2. Ortada gerçek durum gösteren izin ve hazırlık satırları.
 3. Altta üç kısa kurulum ve kullanım adımı.
 
-Ekran Kaydı ve Giriş İzleme satırları gerçek macOS durumuna göre **Eksik**, **Ayar Gerekiyor**, **Yeniden Aç** veya **İzin Hazır** gösterir. **İzin İste** ve **Ayarları Aç** eylemleri birbirinden bağımsızdır; uygulama açılışında yalnız salt-okunur kontrol yapılır. EVE satırı gerçek süreç envanterine göre **Bekleniyor**, **Launcher Açık**, **EVE Bulundu** veya **Seçim Gerekiyor** durumunu gösterir. Türkçe model kendi aşaması gelene kadar **Sırada** kalır.
+Ekran Kaydı ve Giriş İzleme satırları gerçek macOS durumuna göre **Eksik**, **Ayar Gerekiyor**, **Yeniden Aç** veya **İzin Hazır** gösterir. **İzin İste** ve **Ayarları Aç** eylemleri birbirinden bağımsızdır; uygulama açılışında yalnız salt-okunur kontrol yapılır. Tek EVE satırı süreç ve pencere durumunu birlikte gösterir: **Bekleniyor**, **Launcher Açık**, **İzin Gerekiyor**, **Öne Getir**, **Aranıyor**, **Seçildi**, istemci/pencere **Seçim Gerekiyor**, **Yenilenmeli** veya genel hata. Türkçe model kendi aşaması gelene kadar **Sırada** kalır.
 
 ## Otomatik EVE süreç algılama
 
 0.4a katmanı çalışan uygulamaları `NSWorkspace` ile salt okunur izler. Bir EVE süreç adayı yalnız `com.ccpgames.eveonline` paket kimliği ile `EVE` çalıştırılabilir adı birlikte tam eşleştiğinde kabul edilir. `com.ccpgames.eve-online-launcher`, launcher yardımcıları, Steam kısayolu, bu uygulamanın kendisi ve yalnız adında “EVE” geçen başka süreçler hedef seçilmez.
 
-Sürekli hızlı tarama yapılmaz; uygulama açılma, kapanma ve etkinleşme bildirimlerinde anlık envanter yenilenir. Birden fazla eşleşen EVE süreç adayında yalnız tek bir istemci öndeyse onun PID'si seçilir, aksi durumda rastgele seçim yapılmaz. Bu PID tek başına kalıcı veya kriptografik bir kimlik sayılmaz; sonraki ScreenCaptureKit pencere eşlemesinde güncel paket kimliği ve pencere sahibiyle yeniden çapraz doğrulanacaktır. Bu aşamada EVE veya launcher başlatılmamış, ekran envanteri alınmamış ve macOS izin istemi açılmamıştır.
+Sürekli hızlı tarama yapılmaz; uygulama açılma, kapanma ve etkinleşme bildirimlerinde anlık envanter yenilenir. Birden fazla eşleşen EVE süreç adayında yalnız tek bir istemci öndeyse onun PID'si seçilir, aksi durumda rastgele seçim yapılmaz. PID tek başına kalıcı veya kriptografik kimlik sayılmaz; bağlantı durumu `launchDate` değerini de taşır ve ScreenCaptureKit pencere eşlemesinde güncel paket kimliği ile pencere sahibi yeniden çapraz doğrulanır. 0.4d canlı turunda Launcher başlatılmış ve ayrı **Launcher Açık** durumu doğrulanmıştır; EVE oyun istemcisi henüz başlatılmamıştır.
 
 ## Güvenli pencere eşleştirme ve çözümleme altyapısı
 
@@ -45,7 +45,11 @@ Snapshot hedef sürece özeldir: yalnız istenen PID + paket kimliğine ait ekra
 
 Snapshot'ın iki yanında PID, paket kimliği, çalıştırılabilir adı, `launchDate`, sonlandırılmamış olma ve öndelik yeniden doğrulanır. Eksik `launchDate` veya değişen süreç kimliği güvenli biçimde reddedilir; yalnız hâlâ aynı süreç olduğu doğrulanan sonuç saf pencere eşleştiriciye gönderilir. Sağlayıcı da yükleme öncesi, sonrası ve hata yolunda Ekran Kaydı iznini yeniden kontrol eder; yükleme sırasında izin kaybolmasını genel hata yerine açık izin gereksinimi olarak bildirir ve iptal edilmiş işi başarılı snapshot nesli saymaz. Süreç monitöründeki oturum kimliği denetimi, `stop` sonrasında geciken eski callback'in yeni `start` oturumunu güncellemesini engeller.
 
-Bu çözümleyici henüz `LaunchViewModel` veya uygulama yaşam döngüsüne bağlanmamıştır. Bu alt adımda gerçek `SCShareableContent` envanteri alınmamış, EVE ya da Launcher çalıştırılmamış, EVE penceresi canlı seçilmemiş ve TCC istemi açılmamıştır. Tam ekran etiketi hâlâ yalnız geometrik bir tanıdır; canlı macOS tam ekran Space desteği kanıtı değildir.
+0.4d'de çözümleyici `LaunchViewModel` yaşam döngüsüne kapılı biçimde bağlanmıştır. İzleme oturumu, tam EVE kimliği, öndelik ve taze Ekran Kaydı preflight sonucu birlikte geçmeden çözümleme başlamaz. Launcher-only, oyun kapalı, çoklu istemci belirsizliği, EVE'nin önde olmaması veya izin eksikliği yolları gerçek sağlayıcıya ulaşmaz. Otomatik akış TCC istemi açmaz; izin isteği yalnız kullanıcının görünür düğmesiyle mümkündür.
+
+Etkin istek ViewModel oturumu, istek kimliği ve beklenen PID + `launchDate` süreç nesliyle korunur. EVE süreç nesli değişirse, kapanırsa veya öndeliği kaybederse eski iş iptal edilir ve geç sonuç arayüze uygulanmaz. Yardımcı uygulama penceresinin başka bir Space'te görünmemesi tek başına iptal nedeni değildir; tam ekran EVE desteği hedefi için gerçek belirleyici EVE'nin önde olup olmadığıdır. Sürekli ScreenCaptureKit akışı eklendiğinde arka plan ve enerji politikası ayrıca yeniden değerlendirilecektir.
+
+Canlı Launcher-only turunda arayüz **Launcher Açık** durumunu ve “Launcher açık; EVE oyun istemcisi bekleniyor” açıklamasını gösterdi. Oyun süreci olmadığı için çözümleyici ve `SCShareableContent` çağrısı çalışmadı; hiçbir macOS izin istemi açılmadı. Tam ekran etiketi hâlâ yalnız geometrik bir tanıdır; canlı normal, borderless veya tam ekran EVE seçimi kanıtı değildir.
 
 ## Gerekli izinler ve nedenleri
 
@@ -63,7 +67,7 @@ Planlanan ScreenCaptureKit kullanımı için Apple belgelerinde belirtilen `NSSc
 
 - Native macOS, Swift ve SwiftUI
 - Minimum macOS 15.0
-- İzin kapılı ScreenCaptureKit değer snapshot'ı, saf pencere eşleştiricisi ve henüz yaşam döngüsüne bağlanmamış, eski sonuçlara dayanıklı tek seferlik çözümleyici
+- İzin, öndeki EVE ve PID + `launchDate` süreç nesli kapılarıyla yaşam döngüsüne bağlanmış tek seferlik ScreenCaptureKit pencere çözümlemesi
 - Vision ile cihaz üzerinde OCR
 - Değiştirilebilir `TranslationEngine` yapısı; ilk motor Apple Translation
 - Sol Command için yalnızca dinleyen global giriş gözlemcisi
@@ -92,6 +96,8 @@ CCP, üçüncü taraf uygulamaları için kapsamlı bir “izin verilenler” li
 ## Resmî teknik ve politika kaynakları
 
 - [Apple ScreenCaptureKit](https://developer.apple.com/documentation/screencapturekit)
+- [Apple SwiftUI ScenePhase](https://developer.apple.com/documentation/swiftui/scenephase)
+- [Apple macOS tam ekran ve Space davranışı](https://developer.apple.com/library/archive/documentation/General/Conceptual/MOSXAppProgrammingGuide/FullScreenApp/FullScreenApp.html)
 - [Apple Quartz Event Services](https://developer.apple.com/documentation/coregraphics/quartz-event-services)
 - [Apple Translation](https://developer.apple.com/documentation/translation)
 - [CCP — Third party applications](https://support.eveonline.com/hc/en-us/articles/5888034246428-Third-party-applications)
