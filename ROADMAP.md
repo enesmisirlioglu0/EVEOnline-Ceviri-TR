@@ -41,7 +41,7 @@ Durum işaretleri:
 
 - ✅ `GameApplicationProfile` ile EVE'nin tam oyun ve launcher kimlik alanlarını birbirinden ayır
 - ✅ `NSWorkspace` süreç envanterini ekran izni istemeden ve uygulama başlatmadan salt okunur al
-- ✅ Yalnız tam `com.ccpgames.eveonline` + `EVE` eşleşmesini kabul et; launcher, helper, Steam kısayolu ve bulanık ad eşleşmelerini dışla
+- ✅ Yalnız tam `com.ccpgames.eveonline` + exact `EVE`/`exefile` çalışma adı eşleşmesini kabul et; launcher, helper, Steam kısayolu ve bulanık ad eşleşmelerini dışla
 - ✅ Uygulama açılma, kapanma ve etkinleşme bildirimleriyle polling yapmadan durumu yenile
 - ✅ Tek istemcide PID'yi seç; çoklu istemcide yalnız tek öndeki adayı kabul et ve belirsizlikte rastgele seçim yapma
 - ✅ **Bekleniyor**, **Launcher Açık**, **EVE Bulundu** ve **Seçim Gerekiyor** süreç durumlarını kompakt arayüze bağla
@@ -55,6 +55,7 @@ Durum işaretleri:
 - ✅ Tek seferlik çözümleyiciyi `LaunchViewModel` ve tek EVE durum satırına bağla; izleme oturumu + öndeki tam EVE + taze Ekran Kaydı izni geçmeden çağırma
 - ✅ PID + `launchDate` süreç nesli, istek kimliği ve sonuç-sonu izin denetimiyle eski sonucu reddet; uygulama/pencere belirsizliği ile geometrik tam ekran adayını dürüst durumlara eşle
 - ✅ Launcher-only canlı turunda **Launcher Açık** durumunu, çözümleyici/ScreenCaptureKit çağrısına girmemeyi ve otomatik izin istememeyi doğrula
+- ✅ Gerçek istemcide gözlenen `exefile` çalışma adını üç kimlik kapısında tutarlı destekle; yeniden derlenen uygulamanın arka plandaki EVE'yi tanıyıp eksik Ekran Kaydı kapısında **İzin Gerekiyor** gösterdiğini canlı doğrula
 - ⏳ Kullanıcı oyun istemcisine girdiğinde `SCShareableContent` ile gerçek hedef pencere envanterini al ve seçilen sonucu arayüzde canlı doğrula
 - ⏳ Launcher, giriş ve hesap pencerelerini canlı turda doğrula ve hassas ekran güvenlik kapısını tamamla
 - ⏳ Belirsizlik sürerse küçük kullanıcı seçimini ekle

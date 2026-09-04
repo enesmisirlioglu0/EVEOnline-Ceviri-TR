@@ -2,6 +2,34 @@
 
 Bu dosya yalnızca tamamlanan ve doğrulanan değişiklikleri kaydeder. Planlanan özellikler değişiklik olarak yazılmaz.
 
+## Geliştirme aşaması 0.4e — 2026-09-04
+
+### Düzeltildi
+
+- Gerçek EVE istemcisinin `NSRunningApplication` tarafından `exefile` olarak bildirilen çalışma zamanı yürütülebilirini, doğru `com.ccpgames.eveonline` paket kimliğiyle birlikte exact ve büyük/küçük harfe duyarlı profile ekleme
+- İlk süreç keşfi, snapshot öncesi/sonrası çözümleyici ve saf pencere eşleştiricide aynı çalışma adı allowlist'ini kullanma
+- `GameProcessIdentity` içinde profil sabiti yerine gerçekten gözlenen yürütülebilir adı koruyarak `exefile` hedefinin yapay snapshot kimliği uyuşmazlığına düşmesini engelleme
+
+### Güvenlik sınırları korundu
+
+- `nil`, boş, kısmi, büyük/küçük harf varyantlı veya yardımcı süreç adları kabul edilmez; görünen uygulama adı kimlik kararına katılmaz
+- Launcher'ın ayrı paket kimliği, PID + `launchDate`, öndelik ve ScreenCaptureKit owner PID + paket kimliği çapraz kontrolleri değişmeden kalır
+- Mutlak oyun kurulum yolu profile gömülmez; bu metaveri eşleşmesinin yayıncı kod imzası doğrulaması olmadığı açık tutulur
+
+### Doğrulandı
+
+- Gerçek EVE sürecinin güvenli `NSRunningApplication` alanlarında paket kimliği `com.ccpgames.eveonline`, çalışma adı `exefile`, dolu `launchDate` ve arka plan durumu gözlendi. Oyun pikselleri yakalanmadı; süreç argümanları, tam kullanıcı yolu ve ham kimlik değerleri depoya veya kullanıcı belgelerine yazılmadı.
+- Exact `EVE`/`exefile` pozitifleri; benzer ad, helper, yanlış paket, görünen ad, sonlandırılmış süreç, Launcher-only, çoklu istemci ve snapshot çalışma adı uyuşmazlığı negatiflerini kapsayan Swift 6 strict harness'i 21 senaryo ve 22/22 kontrolden dört ardışık turda geçti.
+- Önceki tam 0.4d sahte entegrasyon harness'i, varsayılan gerçek istemci adı `exefile` olacak biçimde yeniden derlendi; izin/öndelik kapıları, süreç izleme, çözümleyici, iptal ve eski sonuç yollarının tamamı 36 senaryo ve 137/137 kontrolden dört ardışık turda geçti.
+- Debug derlemesi, Xcode Analyze ve `SWIFT_VERSION=6` tam sıkı eşzamanlılık/uyarıları hata sayan proje derlemesi başarılı oldu; bağımsız mimari ve UI incelemeleri engelleyici bulgu olmadan **GO** verdi.
+- Yeni Xcode derlemesi arka plandaki gerçek EVE istemcisini Launcher'dan ayırdı. Bu derlemede Ekran Kaydı hazır görünmediği için EVE satırı güvenli biçimde **İzin Gerekiyor** gösterdi; uygulama kendiliğinden izin istemedi.
+
+### Canlı doğrulama bekliyor
+
+- Kullanıcının önceki Debug kopyasına verdiği Ekran Kaydı izni yeniden derlenen çalışan kopyada hazır görünmedi. Kullanıcı yeni kopyaya açıkça izin vermeden gerçek `SCShareableContent` envanteri başlatılmayacaktır.
+- EVE öndeyken canlı pencere seçimi, normal/borderless/tam ekran sınıflaması ve yeniden arka plana alınca **Öne Getir** geçişi henüz doğrulanmamıştır.
+- Görüntü akışı, piksel yakalama, OCR, çeviri ve yan panel bu düzeltmenin parçası değildir.
+
 ## Geliştirme aşaması 0.4d — 2026-09-04
 
 ### Eklendi

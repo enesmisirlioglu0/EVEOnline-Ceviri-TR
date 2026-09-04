@@ -42,7 +42,7 @@ Sabit alan seçimi ve ekranın tamamındaki her yazıyı sürekli çevirmek bu �
 
 ### 4.1 EVE profili
 
-İlk EVE profili, oyun istemcisini uygulama kimliği ve pencere sahibi bilgisiyle bulacak. Bu Mac'teki mevcut kurulumda oyun istemcisi `com.ccpgames.eveonline`, Launcher ise `com.ccpgames.eve-online-launcher` kimliğini kullanmaktadır. Bu değerler sürüm değişikliklerine karşı tek başına yeterli kabul edilmeyecek; işlem adı ve yakalanabilir pencere bilgisiyle birlikte değerlendirilecektir.
+İlk EVE profili, oyun istemcisini uygulama kimliği ve pencere sahibi bilgisiyle bulacak. Bu Mac'teki mevcut kurulumda oyun istemcisi `com.ccpgames.eveonline`, Launcher ise `com.ccpgames.eve-online-launcher` kimliğini kullanmaktadır. Canlı oyun paketi girişte `EVE` adını taşısa da çalışan iç oyun süreci `NSRunningApplication` tarafından `exefile` olarak bildirilmiştir. Bu nedenle istemci yalnız doğru paket kimliği ile exact ve büyük/küçük harfe duyarlı `EVE` veya `exefile` çalışma adlarından biri birlikte görülürse kabul edilir. Bu metaveri yayıncı imzasını kanıtlamaz; seçilen süreç daha sonra PID, `launchDate` ve ScreenCaptureKit pencere sahibiyle yeniden doğrulanır.
 
 - Launcher, giriş ve hesap pencereleri otomatik olarak dışlanacak.
 - Birden fazla EVE istemcisi bulunursa öndeki oyun penceresi seçilecek; belirsizlik varsa küçük bir seçim uyarısı gösterilecek.
@@ -50,6 +50,8 @@ Sabit alan seçimi ve ekranın tamamındaki her yazıyı sürekli çevirmek bu �
 - EVE arka plandayken OCR ve çeviri duracak.
 
 0.4a uygulamasında bunun ilk, TCC gerektirmeyen katmanı tamamlanmıştır. `GameApplicationProfile.eveOnline`, EVE süreç adayını yalnız tam `com.ccpgames.eveonline` paket kimliği ve `EVE` çalıştırılabilir adıyla kabul eder; launcher için `com.ccpgames.eve-online-launcher` ayrı bekleme durumu üretir. Bu metaveri eşleşmesi yayıncı kod imzasını kanıtlamaz. `NSWorkspace` açılma, kapanma ve etkinleşme bildirimleri sürekli polling yerine anlık yenileme sağlar. Birden fazla eşleşen istemcide yalnız tek öndeki aday seçilir, aksi durumda sonuç belirsiz kalır. Seçilen PID sonraki ScreenCaptureKit pencere sahibi eşleşmesinde güncel süreç kimliğiyle yeniden doğrulanacaktır.
+
+0.4e canlı uyumluluk düzeltmesinde bu ilk varsayım gerçek istemciyle ölçülmüştür. `NSRunningApplication.executableURL` açık oyunda `exefile` değerini verdiği için profil, bulanık eşleşme yerine yalnız `EVE` ve gözlenen `exefile` adlarını içeren exact allowlist'e dönüştürülmüştür. Aynı kural ilk keşif, snapshot öncesi/sonrası çözümleyici ve saf pencere eşleştiricide uygulanır; süreç kimliğine sabit bir ad değil gerçekten gözlenen ad yazılır. Launcher veya yardımcı süreç yalnız ad benzerliğiyle kabul edilmez.
 
 ### 4.2 Normal ve tam ekran yakalama
 
@@ -70,6 +72,8 @@ ViewModel, etkin isteği kendi oturum/istek kimliğiyle ve EVE süreç neslini P
 Yardımcı uygulamanın kendi sahnesinin başka bir macOS Space'inde görünmemesi tek başına çözümlemeyi durdurmaz. Tam ekran EVE ayrı bir Space'te öndeyken yardımcı pencere görünmez olabileceğinden kapı, uygulamanın sahne görünürlüğü yerine EVE'nin gerçek öndelik durumuna bağlanmıştır. Bu karar yalnız tek seferlik metadata envanteri içindir; sürekli `SCStream` aşamasında arka plan, Space ve enerji politikası yeniden ele alınacaktır.
 
 İlk canlı 0.4d turunda kullanıcı yalnız EVE Launcher'ı açmıştır. Xcode'dan çalıştırılan güncel uygulama **Launcher Açık** durumunu göstermiş, gerçek oyun istemcisi bulunmadığı için pencere çözümleyicisine/`SCShareableContent` yoluna girmemiş ve macOS izin istemi açmamıştır. Gerçek normal, borderless ve tam ekran EVE pencere seçimi hâlâ canlı test beklemektedir.
+
+0.4e turunda kullanıcı gerçek EVE istemcisine girmiş ve ardından oyunu arka plana almıştır. Eski build canlı `exefile` adını tanımadığı için yanlış Launcher-only sonucu üretmiştir. Exact kimlik düzeltmesiyle yeniden derlenen uygulama gerçek EVE'yi tanımış; macOS bu yeni çalışan kopyada Ekran Kaydı iznini eksik bildirdiği için arayüz doğru biçimde **İzin Gerekiyor** göstermiş ve `SCShareableContent` yolu açılmamıştır. Dolayısıyla süreç algılama düzeltmesi canlı doğrulanmış, fakat pencere envanteri ve seçimi henüz doğrulanmamıştır.
 
 “Tam ekranda çalışır” hedefi ürüne dâhildir; ancak her oyun ve macOS sürümündeki tam ekran davranışı aynı olmadığından bu özellik gerçek EVE testi geçmeden tamamlanmış sayılmayacaktır.
 
