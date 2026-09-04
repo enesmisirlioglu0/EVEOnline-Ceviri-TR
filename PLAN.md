@@ -153,10 +153,10 @@ Ana pencere i-Panel benzeri küçük bir yardımcı uygulama olacak; ilk tasarı
 
 ### Orta bölüm — İzin ve hazırlık satırları
 
-1. **Ekran Kaydı:** Eksik / İzin Ver / Ayarları Aç / Hazır
-2. **Giriş İzleme:** Eksik / İzin Ver / Ayarları Aç / Hazır
+1. **Ekran Kaydı:** Eksik / İzin Ver / Ayarları Aç / İzin Hazır
+2. **Giriş İzleme:** Eksik / İzin Ver / Ayarları Aç / İzin Hazır
 3. **Türkçe Çeviri Modeli:** Hazırlanıyor / İndir / Hazır / Desteklenmiyor
-4. **EVE Bağlantısı:** Oyun bekleniyor / EVE bulundu / Yakalama hazır
+4. **EVE'yi Otomatik Bulma:** Oyun bekleniyor / EVE bulundu / Yakalama hazır
 
 Bu satırlar gerçek sistem durumunu okuyacak. macOS iznini uygulama içinden açıyormuş gibi görünen sahte anahtar kullanılmayacak.
 
@@ -176,6 +176,10 @@ En altta **Çeviriyi Duraklat/Sürdür**, **Paneli Gizle** ve gerektiğinde **Ay
 | --- | --- | --- |
 | Ekran Kaydı | ScreenCaptureKit ile hedef oyunun görünür görüntüsünü almak | Ses kaydetmek, ekran görüntüsü dosyası oluşturmak, başka uygulamaları sürekli arşivlemek |
 | Giriş İzleme | EVE öndeyken sol Command tuşunu yalnızca dinlemek | Tuş kaydı tutmak, yazılan içeriği saklamak, tuş/tıklama göndermek veya engellemek |
+
+Uygulama açılışında yalnız `CGPreflightScreenCaptureAccess` ve `CGPreflightListenEventAccess` ile mevcut durum okunur. İzin isteyen `CGRequestScreenCaptureAccess` ve `CGRequestListenEventAccess` çağrıları yalnız kullanıcının kendi satırındaki **İzin İste** düğmesine basmasıyla çalışabilir; iki istem arka arkaya otomatik açılmaz.
+
+Planlanan ScreenCaptureKit kullanımı için Apple belgelerinde belirtilen `NSScreenCaptureUsageDescription` uygulama paketinde bulunur. Apple tarafından belgelenmiş bir `NSInputMonitoringUsageDescription` anahtarı olmadığı için böyle bir anahtar eklenmez; Giriş İzleme gerekçesi uygulama içinde görünür metinle açıklanır. Sistem Ayarları deep linkleri yalnız kolaylık amaçlıdır ve gerçek izin kaynağı sayılmaz; manuel Gizlilik ve Güvenlik yolu da her zaman gösterilir.
 
 ### İzin olmayan hazırlık
 

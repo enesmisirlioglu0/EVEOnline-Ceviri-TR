@@ -28,11 +28,14 @@ Durum işaretleri:
 
 ## 0.3 — İzin koordinatörü
 
-- ⏳ Ekran Kaydı durumunu kontrol et ve isteği yalnız açıklamasından sonra başlat
-- ⏳ Giriş İzleme durumunu kontrol et ve isteği yalnız sol Command özelliği etkinleşirken başlat
-- ⏳ İzin reddi, sonradan açma ve uygulamayı yeniden başlatma gereksinimini anlaşılır göster
-- ⏳ Gereksiz Erişilebilirlik, mikrofon, sistem sesi, kamera ve Tam Disk Erişimi istemediğini doğrula
-- ⏳ İzin açıklamalarını kaynak README, uygulama metni ve gerekli proje ayarlarıyla eşleştir
+- ✅ Ekran Kaydı durumunu salt-okunur kontrol et; izin isteğini yalnız açıklamalı düğmeye basıldığında başlat
+- ✅ Giriş İzleme durumunu salt-okunur kontrol et; izin isteğini yalnız kendi düğmesine basıldığında başlat
+- ✅ İzin yok, Sistem Ayarları gerekiyor, aynı süreçte yeniden kontrol/açılış gerekiyor ve hazır durumlarını anlaşılır göster
+- ✅ Sistem Ayarları bağlantısına ek olarak kullanıcıya doğru manuel Gizlilik ve Güvenlik yolunu yaz
+- ✅ Gereksiz Erişilebilirlik, mikrofon, sistem sesi, kamera ve Tam Disk Erişimi istemediğini kod ve paket ayarlarında doğrula
+- ✅ Planlanan ScreenCaptureKit kullanımı için Apple belgelerinde belirtilen `NSScreenCaptureUsageDescription` değerini pakete ekle; belgelenmemiş `NSInputMonitoringUsageDescription` anahtarı ekleme
+- ✅ İzin açıklamalarını kaynak README, uygulama metni ve proje ayarlarıyla eşleştir
+- 🟡 Kullanıcı açıkça onayladığında gerçek macOS izin verme, reddetme, Sistem Ayarları'ndan açma ve uygulamaya dönüş turunu bu Mac'te doğrula
 
 ## 0.4 — EVE'yi otomatik bulma
 

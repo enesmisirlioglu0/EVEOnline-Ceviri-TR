@@ -2,6 +2,30 @@
 
 Bu dosya yalnızca tamamlanan ve doğrulanan değişiklikleri kaydeder. Planlanan özellikler değişiklik olarak yazılmaz.
 
+## Geliştirme aşaması 0.3 — 2026-09-04
+
+### Eklendi
+
+- Ekran Kaydı ile Giriş İzleme için birbirinden bağımsız gerçek izin durumları ve `LaunchViewModel` tabanlı açılış durumu
+- İzin durumunu istem açmadan okuyan `CGPreflightScreenCaptureAccess` ve `CGPreflightListenEventAccess` koordinatörü
+- Yalnız kullanıcı ilgili **İzin İste** düğmesine bastığında çalışabilen `CGRequestScreenCaptureAccess` ve `CGRequestListenEventAccess` yolları
+- İzin kapalıysa **Ayarları Aç** eylemi ile birlikte doğru manuel Sistem Ayarları yolu
+- İzin değişikliği aynı süreçte görünmezse yanlış **İzin Hazır** sonucu vermeyen **Yeniden Aç** durumu
+- Ekran yakalama gerekçesini içeren `NSScreenCaptureUsageDescription` Info.plist girdisi
+- Sahte koordinatörlerle izin mantığını sistem istemi açmadan sınayabilmek için bağımlılık enjeksiyonu
+
+### Doğrulandı
+
+- Temiz macOS arm64 derlemesi başarıyla tamamlandı ve derlenmiş uygulama paketindeki ekran yakalama kullanım açıklaması doğrudan okundu.
+- Derlenmiş pakette belgelenmemiş `NSInputMonitoringUsageDescription` anahtarının bulunmadığı doğrulandı.
+- Geçici sahte bağımlılık denetimi; salt-okunur kontrol, reddedilen istek, yeniden açma gereksinimi, sonradan izinli durum, gereksiz tekrar istememe ve iki Sistem Ayarları bağlantısı dahil 10 kontrolü geçti.
+- Xcode'da çalışan uygulama hiçbir sistem istemi açmadan iki izni **Eksik** gösterdi; iki **İzin İste** düğmesi erişilebilirlik ağacında ayrı adlandırılmış kontroller olarak göründü.
+- Türkçe çeviri modeli ve EVE'yi otomatik bulma satırları çalışma zamanı özelliği henüz olmadığı için **Sırada** kalmaya devam etti.
+
+### Canlı doğrulama bekliyor
+
+- Gerçek macOS izin istemine basılmadı; izin verme, reddetme, Sistem Ayarları'ndan açma ve uygulamaya dönüş turu kullanıcı açıkça onayladığında ayrıca denenecek.
+
 ## Geliştirme aşaması 0.2 — 2026-09-04
 
 ### Eklendi

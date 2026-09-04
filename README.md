@@ -2,7 +2,7 @@
 
 EVE Online Çeviri TR, macOS üzerinde çalışan yerel bir oyun ekranı çeviri yardımcısıdır. Öncelikli amacı, çalışan EVE Online istemcisini otomatik bulmak ve oyuncu sol Command tuşuna bastığında farenin yakınındaki İngilizce metni Türkçeye çevirip özgün İngilizce yazıyı kapatmadan yanında tek, okunaklı bir panelde göstermektir.
 
-> **Mevcut durum: Geliştirme aşaması 0.2, kompakt açılış arayüzü hazır.** Derlenebilir macOS SwiftUI projesi, küçük tanıtım/durum penceresi ve üç adımlı kullanım anlatımı Xcode'da doğrulanmıştır. EVE'yi otomatik bulma, gerçek izin yönetimi, ekran yakalama, sol Command tetikleyicisi, OCR, çeviri ve oyun yanında gösterilecek panel henüz uygulanmadı. Aşama numarası uygulamanın pazarlama sürümü değildir.
+> **Mevcut durum: Geliştirme aşaması 0.3, izin koordinatörü hazır.** Derlenebilir macOS SwiftUI projesi, küçük tanıtım/durum penceresi ve Ekran Kaydı ile Giriş İzleme durumlarını salt-okunur kontrol eden izin katmanı Xcode'da doğrulanmıştır. Sistem izin isteği yalnız kullanıcı ilgili düğmeye basarsa açılabilir. EVE'yi otomatik bulma, ekran yakalama akışı, sol Command tetikleyicisi, OCR, çeviri ve oyun yanında gösterilecek panel henüz uygulanmadı. Aşama numarası uygulamanın pazarlama sürümü değildir.
 
 ## Değişmez çalışma biçimi
 
@@ -27,7 +27,7 @@ Uygulamanın 420 × 680 punto boyutundaki ana penceresi i-Panel benzeri kompakt 
 2. Ortada gerçek durum gösteren izin ve hazırlık satırları.
 3. Altta üç kısa kurulum ve kullanım adımı.
 
-0.2 sürümünde işlevler henüz bağlı olmadığı için bütün hazırlık satırları dürüstçe **Sırada** görünür ve hiçbir sistem izni otomatik istenmez. macOS gizlilik izinleri uygulama içindeki gerçek bir anahtarla doğrudan açılıp kapatılamaz. Bu nedenle 0.3 aşamasında satırlar sahte birer anahtar gibi davranmayacak; gerçek **İzin Ver**, **Ayarları Aç**, **Hazır** veya **Eksik** durumlarını gösterecektir.
+0.3 aşamasında Ekran Kaydı ve Giriş İzleme satırları gerçek macOS durumuna göre **Eksik**, **Ayar Gerekiyor**, **Yeniden Aç** veya **İzin Hazır** gösterir. **İzin İste** ve **Ayarları Aç** eylemleri birbirinden bağımsızdır; uygulama açılışında yalnız salt-okunur kontrol yapılır. Türkçe model ile EVE'yi otomatik bulma satırları kendi aşamaları gelene kadar **Sırada** kalır.
 
 ## Gerekli izinler ve nedenleri
 
@@ -38,6 +38,8 @@ Uygulamanın 420 × 680 punto boyutundaki ana penceresi i-Panel benzeri kompakt 
 | İngilizce–Türkçe dil modeli | Apple Translation'ın cihaz içi modeli hazır değilse sistemin modeli indirebilmesi için | Bu bir macOS gizlilik izni değildir; model hazırlama adımıdır |
 
 Mikrofon, sistem sesi, kamera, Tam Disk Erişimi, kişiler, konum, Apple Events/Otomasyon ve oyun arayüzünü kontrol etmeye yarayan Erişilebilirlik izni planlanmamaktadır. Uygulama geliştirilirken yeni bir iznin gerçekten zorunlu olduğu kanıtlanırsa önce nedeni belgelenecek ve kapsam ayrıca değerlendirilecektir.
+
+Planlanan ScreenCaptureKit kullanımı için Apple belgelerinde belirtilen `NSScreenCaptureUsageDescription` uygulama paketine eklenmiştir. Apple tarafından belgelenmiş bir `NSInputMonitoringUsageDescription` anahtarı bulunmadığından böyle bir anahtar uydurulmamış; Giriş İzleme gerekçesi doğrudan uygulama arayüzünde açıklanmıştır. Sistem Ayarları bağlantıları yalnız yardımcıdır; izin kapalı olduğunda kullanıcıya **Sistem Ayarları → Gizlilik ve Güvenlik → Ekran ve Sistem Sesi Kaydı** veya **Giriş İzleme** yolu da gösterilir.
 
 ## Teknik yön
 
