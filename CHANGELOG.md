@@ -2,6 +2,32 @@
 
 Bu dosya yalnızca tamamlanan ve doğrulanan değişiklikleri kaydeder. Planlanan özellikler değişiklik olarak yazılmaz.
 
+## Geliştirme aşaması 0.4f — 2026-09-04
+
+### Düzeltildi
+
+- Tam ekran Space'teki gerçek EVE ana yüzeyinin macOS tarafından `normalWindow` yerine adlandırılmış `statusWindow` seviyesinde sunulması nedeniyle elenmesini giderme
+- Pencere katmanı kabulünü yalnız Core Graphics'in adlandırılmış `normalWindow` ve `statusWindow` seviyeleriyle sınırlandırma; bütün diğer katmanları güvenli biçimde reddetme
+- Belirli çözünürlükleri sabitlemek yerine 320 × 180 güvenlik tabanını geçen bütün geçerli EVE pencere boyutlarını değerlendirme; bu tabanı ince yardımcı yüzeyleri ana oyun yüzeyinden ayırmak amacıyla kullanma
+
+### Güvenlik sınırları korundu
+
+- Exact owner PID + paket kimliği, `launchDate` süreç nesli, EVE'nin önde olması, geçerli pencere kimliği, ekranda görünürlük, sonlu geometri, ekranla en az yüzde 10 kesişme ve belirsizlikte durma kapıları değişmeden kaldı
+- Yalnız hedef EVE sürecine ait sınırlı sayısal pencere metadata alanları geçici olarak incelendi; başka uygulama başlıkları, oyun pikselleri, oyun metni, süreç argümanları veya hesap bilgileri alınmadı
+- Tanılama kodu canlı doğrulamadan sonra tamamen kaldırıldı; görüntü akışı başlatılmadı ve hiçbir ekran verisi diske yazılmadı
+
+### Doğrulandı
+
+- Kullanıcının verdiği Ekran Kaydı izni uygulamaya dönüşte **İzin Hazır** olarak görüldü. EVE tam ekran Space'te öne getirildiğinde hedefe özel ScreenCaptureKit envanteri büyük ana yüzeyi seçti, ince yardımcı yüzeyi eledi ve uygulama **Seçildi** durumunu gösterdi.
+- Canlı boyutlar yalnız regresyon testi örneği olarak kullanıldı; seçim kodunda çözünürlük listesi bulunmadığı kaynak incelemesiyle doğrulandı. Retina, 1080p, 1440p ve 4K gibi farklı boyutlar aynı genel geometri kurallarından geçer.
+- `statusWindow` ana yüzey seçimi, küçük yardımcı yüzey reddi, normal pencere gerilemesi, komşu bilinmeyen katmanların reddi, yabancı owner reddi, yakın eşitlikte belirsizlik, tam 320 × 180 sınırı, iki alt-sınır negatifi, geniş en-boy oranı ve büyük 4K-benzeri frame'i kapsayan matcher harness'i 12 senaryo ve 14/14 kontrolden dört ardışık turda geçti.
+- Tam sahte entegrasyon harness'i 36 senaryo ve 137/137 kontrolden dört ardışık turda geçti. Debug, Analyze ve Swift 6 strict/warnings-as-errors derlemeleri ile Xcode içindeki son güncel derleme başarılı oldu.
+
+### Sonraki canlı sınır
+
+- Başarılı sonuç pencere metadata seçimini kanıtlar; gerçek piksel akışı, OCR, çeviri ve yan panel başlamadı. Geometrik sunum sınıflayıcısı canlı sonucu `.normal` gösterdiği için tam ekran etiketi 0.5 akış ve koordinat turunda ayrıca ele alınacaktır.
+- Giriş ve hesap ekranı güvenlik kapısı ile Giriş İzleme izni bu adımın kapsamı dışındadır.
+
 ## Geliştirme aşaması 0.4e — 2026-09-04
 
 ### Düzeltildi

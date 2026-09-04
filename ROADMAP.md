@@ -35,7 +35,8 @@ Durum işaretleri:
 - ✅ Gereksiz Erişilebilirlik, mikrofon, sistem sesi, kamera ve Tam Disk Erişimi istemediğini kod ve paket ayarlarında doğrula
 - ✅ Planlanan ScreenCaptureKit kullanımı için Apple belgelerinde belirtilen `NSScreenCaptureUsageDescription` değerini pakete ekle; belgelenmemiş `NSInputMonitoringUsageDescription` anahtarı ekleme
 - ✅ İzin açıklamalarını kaynak README, uygulama metni ve proje ayarlarıyla eşleştir
-- 🟡 Kullanıcı açıkça onayladığında gerçek macOS izin verme, reddetme, Sistem Ayarları'ndan açma ve uygulamaya dönüş turunu bu Mac'te doğrula
+- ✅ Ekran Kaydı için gerçek Sistem Ayarları açma, kullanıcının izin vermesi ve uygulamaya dönüş turunu bu Mac'te doğrula
+- ⏳ Giriş İzleme izin turunu ve reddetme davranışını kullanıcı ayrıca onayladığında doğrula
 
 ## 0.4 — EVE'yi otomatik bulma
 
@@ -56,11 +57,14 @@ Durum işaretleri:
 - ✅ PID + `launchDate` süreç nesli, istek kimliği ve sonuç-sonu izin denetimiyle eski sonucu reddet; uygulama/pencere belirsizliği ile geometrik tam ekran adayını dürüst durumlara eşle
 - ✅ Launcher-only canlı turunda **Launcher Açık** durumunu, çözümleyici/ScreenCaptureKit çağrısına girmemeyi ve otomatik izin istememeyi doğrula
 - ✅ Gerçek istemcide gözlenen `exefile` çalışma adını üç kimlik kapısında tutarlı destekle; yeniden derlenen uygulamanın arka plandaki EVE'yi tanıyıp eksik Ekran Kaydı kapısında **İzin Gerekiyor** gösterdiğini canlı doğrula
-- ⏳ Kullanıcı oyun istemcisine girdiğinde `SCShareableContent` ile gerçek hedef pencere envanterini al ve seçilen sonucu arayüzde canlı doğrula
+- ✅ EVE tam ekran Space'te öndeyken hedefe özel `SCShareableContent` envanterini al; ana oyun yüzeyini adlandırılmış `statusWindow` seviyesinde seçip arayüzde **Seçildi** sonucunu canlı doğrula
+- ✅ Boyutları tek tek sabitlemeden 320 × 180 güvenlik tabanını geçen bütün çözünürlükleri kabul et; ince yardımcı yüzeyi, görünmeyen pencereleri ve bilinmeyen pencere katmanlarını dışla
+- ✅ Gerçek EVE açılma, arka plan ve yeniden öne gelme turunu bu Mac'te doğrula; pencere seçimini yalnız EVE öndeyken tamamla
+- ⏳ Canlı seçim başarılı olsa da `.normal` dönen geometrik sunum sınıflamasını 0.5 akış/koordinat testinde tam ekran olarak ayrıca doğrula veya düzelt
 - ⏳ Launcher, giriş ve hesap pencerelerini canlı turda doğrula ve hassas ekran güvenlik kapısını tamamla
 - ⏳ Belirsizlik sürerse küçük kullanıcı seçimini ekle
 - ⏳ EVE arka plandayken ağır işlemleri durdur
-- ⏳ Kullanıcı açıkça onayladığında gerçek EVE açılma, kapanma ve öne gelme turunu bu Mac'te doğrula
+- ⏳ EVE kapanma ve yeniden başlatma turunu kullanıcı ayrıca istediğinde doğrula
 
 ## 0.5 — Normal ve tam ekran görüntü takibi
 
