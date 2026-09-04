@@ -2,6 +2,37 @@
 
 Bu dosya yalnızca tamamlanan ve doğrulanan değişiklikleri kaydeder. Planlanan özellikler değişiklik olarak yazılmaz.
 
+## Geliştirme aşaması 0.4c — 2026-09-04
+
+### Eklendi
+
+- Her tek seferlik pencere çözümlemesini ayrı istek ve `NSWorkspace` gözlem oturumu kimliğiyle yöneten `@MainActor` `EVEGameWindowResolver`
+- Snapshot alınmadan önce ve sonra PID, paket kimliği, çalıştırılabilir adı, `launchDate`, sonlandırılmamış olma ve öndelik alanlarını yeniden doğrulayan kapalı-güvenli süreç kimliği denetimi
+- EVE'nin çalışmaması, yalnız Launcher'ın açık olması, çoklu aday, arka plan, eksik/değişen kimlik, izin gereksinimi, snapshot hatası, iptal, yeni istekle geçersiz kalma ve çalışma alanı değişikliğini birbirinden ayıran değer tipi çözümleme sonuçları
+- Yalnız güncel süreç doğrulaması başarılı olduğunda saf `GameWindowMatcher` sonucunu değiştirmeden üst katmana aktaran eşleştirme sınırı
+- Yeni isteğin önceki isteği geçersiz kılması; açık iptal, çağıran görev iptali ve çalışma alanı değişikliğinde aktif isteğin sonlandırılıp devam eden snapshot görevine iptal sinyali verilmesi
+- Geç tamamlanan eski snapshot sonucu ile eski gözlem oturumundan sıraya alınmış callback'in etkin isteği değiştirmesini engelleyen istek/oturum denetimleri
+
+### Güçlendirildi
+
+- ScreenCaptureKit snapshot sağlayıcısı, asenkron yüklemenin öncesinde ve sonrasında erişimi yeniden denetler; yükleme hatası sırasında Ekran Kaydı izni kaybolmuşsa genel hata yerine açık `screenRecordingPermissionRequired` sonucu üretir
+- İptal edilen snapshot işi başarılı snapshot nesli olarak sayılmaz ve generation değerini ilerletmez
+- `WorkspaceEVEApplicationMonitor`, durdurulmuş bir gözlem oturumundan geciken callback'in sonraki `start` oturumunu yenilemesini oturum kimliğiyle reddeder
+
+### Doğrulandı
+
+- Debug derlemesi, Xcode Analyze ve `SWIFT_VERSION=6` ile sıkı eşzamanlılık/uyarıları hata sayan derleme başarıyla tamamlandı.
+- Gerçek çözümleyici ve süreç monitörü kaynakları; sahte süreç envanteri, gözlemci, snapshot sağlayıcısı ve pencere eşleştiricisiyle snapshot öncesi/sonrası süreç durumları, tam kimlik değişimi, yalnız görünen ad değişimi, izin/hata ayrımı, matcher sonuç aktarımı, açık ve çağıran iptali, yeni isteğin eskisini geçersiz kılması, çalışma alanı değişikliği, geç başarı/hata, eski callback ve gözlemci temizliği dahil 54 senaryo ve 314/314 kontrolden geçti. Aynı binary dört ardışık turda aynı sonucu verdi.
+- Gerçek ScreenCaptureKit sağlayıcı dosyasında üç iptal ve üç izin kapısının yükleme/generation işlemine göre güvenli sırası salt-okunur kaynak denetimiyle doğrulandı; canlı ScreenCaptureKit çağrısı yapılmadı.
+- Güncel kod incelemesinde çözümleyicinin uygulama yaşam döngüsüne bağlanmadığı, gerçek ScreenCaptureKit sağlayıcısının çağrılmadığı ve istemsiz TCC isteği eklenmediği doğrulandı.
+
+### Canlı doğrulama bekliyor
+
+- `EVEGameWindowResolver`, ScreenCaptureKit sağlayıcısı ve pencere eşleştiricisi henüz `LaunchViewModel` veya uygulama yaşam döngüsüne bağlı değildir.
+- Bu alt adımda gerçek `SCShareableContent` çağrısı yapılmamış, EVE veya Launcher çalıştırılmamış, canlı pencere seçilmemiş ve macOS izin istemi açılmamıştır.
+- Gerçek hedef pencere envanterini alma ve sonucu arayüze bağlama, kullanıcı açıkça onayladığında ayrı bir canlı doğrulama adımı olacaktır.
+- Normal pencere, borderless ve macOS tam ekran Space desteği gerçek EVE turu geçmeden tamamlanmış sayılmayacaktır.
+
 ## Geliştirme aşaması 0.4b — 2026-09-04
 
 ### Eklendi

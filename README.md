@@ -2,7 +2,7 @@
 
 EVE Online Çeviri TR, macOS üzerinde çalışan yerel bir oyun ekranı çeviri yardımcısıdır. Öncelikli amacı, çalışan EVE Online istemcisini otomatik bulmak ve oyuncu sol Command tuşuna bastığında farenin yakınındaki İngilizce metni Türkçeye çevirip özgün İngilizce yazıyı kapatmadan yanında tek, okunaklı bir panelde göstermektir.
 
-> **Mevcut durum: Geliştirme aşaması 0.4b, güvenli pencere eşleştirme altyapısı hazır.** 0.4a'nın çalışan EVE süreç izleyicisine ek olarak izin kapılı, hedefe özel ScreenCaptureKit değer snapshot'ı ve saf pencere eşleştiricisi derlenip sahte bağımlılıklarla doğrulanmıştır. Bu altyapı henüz uygulama yaşam döngüsüne bağlanmamış ve gerçek ScreenCaptureKit envanteri çağrılmamıştır. Ekran yakalama akışı, sol Command tetikleyicisi, OCR, çeviri ve oyun yanında gösterilecek panel henüz uygulanmadı. Aşama numarası uygulamanın pazarlama sürümü değildir.
+> **Mevcut durum: Geliştirme aşaması 0.4c, eski asenkron sonuçlara dayanıklı pencere çözümleyici altyapısı hazır.** 0.4a'nın EVE süreç izleyicisi ile 0.4b'nin izin kapılı ScreenCaptureKit değer snapshot'ı ve saf pencere eşleştiricisine, snapshot öncesi/sonrası tam süreç kimliği doğrulaması yapan tek seferlik çözümleyici eklenmiştir. İptal edilen, yeni istekle geçersiz kalan veya çalışma alanı değişen sonuçlar kullanılmaz. Bu altyapı henüz uygulama yaşam döngüsüne bağlanmamış; gerçek `SCShareableContent` çağrısı, EVE/Launcher çalıştırması veya macOS izin istemi yapılmamıştır. Ekran yakalama akışı, sol Command tetikleyicisi, OCR, çeviri ve oyun yanında gösterilecek panel henüz uygulanmadı. Aşama numarası uygulamanın pazarlama sürümü değildir.
 
 ## Değişmez çalışma biçimi
 
@@ -35,13 +35,17 @@ Ekran Kaydı ve Giriş İzleme satırları gerçek macOS durumuna göre **Eksik*
 
 Sürekli hızlı tarama yapılmaz; uygulama açılma, kapanma ve etkinleşme bildirimlerinde anlık envanter yenilenir. Birden fazla eşleşen EVE süreç adayında yalnız tek bir istemci öndeyse onun PID'si seçilir, aksi durumda rastgele seçim yapılmaz. Bu PID tek başına kalıcı veya kriptografik bir kimlik sayılmaz; sonraki ScreenCaptureKit pencere eşlemesinde güncel paket kimliği ve pencere sahibiyle yeniden çapraz doğrulanacaktır. Bu aşamada EVE veya launcher başlatılmamış, ekran envanteri alınmamış ve macOS izin istemi açılmamıştır.
 
-## Güvenli pencere eşleştirme altyapısı
+## Güvenli pencere eşleştirme ve çözümleme altyapısı
 
 0.4b katmanı ham `SCWindow`, `SCRunningApplication` ve `SCDisplay` nesnelerini uygulamanın diğer bölümlerine taşımaz. ScreenCaptureKit sağlayıcısı bunları kendi izolasyon alanında yalnız süreç kimliği, geometri ve sınırlı pencere durumu içeren değişmez `Sendable` değerlere dönüştürür. Canlı yükleyici Ekran Kaydı izni yoksa envanter çağrısına ulaşmadan durur ve kendisi izin istemez.
 
 Snapshot hedef sürece özeldir: yalnız istenen PID + paket kimliğine ait ekranda görünen pencere değerleri saklanır; başka uygulamaların pencere başlıkları veya görünen adları kopyalanmaz. Saf eşleştirici kendisine verilen EVE süreç descriptor'ındaki paket/çalıştırılabilir kimliği ile öndelik durumunu, ScreenCaptureKit tarafında da owner PID + paket kimliğini birlikte denetler. Sahipsiz, yanlış katmanlı, görünmeyen, bozuk geometrili veya çok küçük pencereleri eler; yakın eşitlikte rastgele seçim yapmak yerine belirsizlik üretir. Önceki pencere yalnız aynı, `launchDate` ile ayırt edilebilen süreç neslinde ve hâlâ yeterince büyük/görünürse korunur. `launchDate` yoksa eski seçim tekrar kullanılmaz.
 
-Tam ekran etiketi şimdilik yalnız pencere ile ekran geometrisinin örtüşmesine dayanan tanısal bir çıkarımdır; macOS tam ekran Space desteğinin canlı kanıtı değildir. Sağlayıcı ve eşleştirici henüz `LaunchViewModel` veya uygulama yaşam döngüsünden çağrılmaz. Asenkron envanter öncesi ve sonrası güncel süreç/öndelik kontrolü ile eski sonuçları iptal edecek koordinatör sonraki alt adımdır. Bu tamamlanmadan “EVE penceresi uygulamada otomatik bulunuyor” iddiası yapılmaz.
+0.4c katmanındaki `EVEGameWindowResolver`, her tek seferlik çözümleme isteği ile onun `NSWorkspace` gözlem oturumunu ayrı kimlikle izler. Yeni istek önceki isteği geçersiz kılar; açık iptal, çağıran görevin iptali veya çalışma alanı değişikliği aktif isteği sonlandırır ve devam eden snapshot görevine iptal sinyali verir. Geç gelen snapshot sonuçları ve durdurulmuş oturumlardan sıraya alınmış callback'ler etkin isteğe karışamaz.
+
+Snapshot'ın iki yanında PID, paket kimliği, çalıştırılabilir adı, `launchDate`, sonlandırılmamış olma ve öndelik yeniden doğrulanır. Eksik `launchDate` veya değişen süreç kimliği güvenli biçimde reddedilir; yalnız hâlâ aynı süreç olduğu doğrulanan sonuç saf pencere eşleştiriciye gönderilir. Sağlayıcı da yükleme öncesi, sonrası ve hata yolunda Ekran Kaydı iznini yeniden kontrol eder; yükleme sırasında izin kaybolmasını genel hata yerine açık izin gereksinimi olarak bildirir ve iptal edilmiş işi başarılı snapshot nesli saymaz. Süreç monitöründeki oturum kimliği denetimi, `stop` sonrasında geciken eski callback'in yeni `start` oturumunu güncellemesini engeller.
+
+Bu çözümleyici henüz `LaunchViewModel` veya uygulama yaşam döngüsüne bağlanmamıştır. Bu alt adımda gerçek `SCShareableContent` envanteri alınmamış, EVE ya da Launcher çalıştırılmamış, EVE penceresi canlı seçilmemiş ve TCC istemi açılmamıştır. Tam ekran etiketi hâlâ yalnız geometrik bir tanıdır; canlı macOS tam ekran Space desteği kanıtı değildir.
 
 ## Gerekli izinler ve nedenleri
 
@@ -59,7 +63,7 @@ Planlanan ScreenCaptureKit kullanımı için Apple belgelerinde belirtilen `NSSc
 
 - Native macOS, Swift ve SwiftUI
 - Minimum macOS 15.0
-- İzin kapılı ScreenCaptureKit değer snapshot'ı ve saf pencere eşleştirme altyapısı; canlı oyun yüzeyi bağlantısı sonraki adımda
+- İzin kapılı ScreenCaptureKit değer snapshot'ı, saf pencere eşleştiricisi ve henüz yaşam döngüsüne bağlanmamış, eski sonuçlara dayanıklı tek seferlik çözümleyici
 - Vision ile cihaz üzerinde OCR
 - Değiştirilebilir `TranslationEngine` yapısı; ilk motor Apple Translation
 - Sol Command için yalnızca dinleyen global giriş gözlemcisi

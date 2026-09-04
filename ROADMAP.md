@@ -49,7 +49,9 @@ Durum işaretleri:
 - ✅ Ekran Kaydı izni yokken yükleyiciyi çağırmayan, yalnız hedef PID + paket kimliğine ait görünür pencere metadatasını saklayan sağlayıcıyı hazırla
 - ✅ Kendisine verilen süreç kimliği ile owner PID + paket kimliğini çapraz denetleyen; bozuk/görünmez/küçük pencereleri eleyen saf eşleştiriciyi hazırla
 - ✅ Çoklu ekran geometrisi, tam ekran tanısal sınıflaması, yakın eşitlikte belirsizlik ve aynı süreç neslindeki önceki seçimi kapsayan sahte testleri tamamla
-- ⏳ Asenkron envanterin öncesi ve sonrasında güncel `NSWorkspace` sürecini denetleyen, eski sonuçları iptal eden koordinatörü ekle
+- ✅ Snapshot öncesinde ve sonrasında PID, paket kimliği, çalıştırılabilir adı, `launchDate`, sonlandırılmamış olma ve öndelik alanlarını yeniden doğrulayan tek seferlik pencere çözümleyicisini ekle
+- ✅ İstek ve gözlem oturumu kimlikleriyle yeni istek, açık/çağıran iptali, çalışma alanı değişikliği, geç snapshot sonucu ve eski callback durumlarını güvenli biçimde ayır
+- ✅ ScreenCaptureKit yüklemesi sırasında kaybolan izni açık izin sonucu olarak sınıflandır; iptal edilmiş snapshot neslini ilerletme ve süreç monitöründe eski `stop`/`start` callback'ini oturum kimliğiyle reddet
 - ⏳ Kullanıcı açıkça onayladığında `SCShareableContent` ile gerçek hedef pencere envanterini al ve sonucu arayüze bağla
 - ⏳ Launcher, giriş ve hesap pencerelerini canlı turda doğrula ve hassas ekran güvenlik kapısını tamamla
 - ⏳ Belirsizlik sürerse küçük kullanıcı seçimini ekle
