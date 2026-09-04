@@ -49,6 +49,8 @@ Sabit alan seçimi ve ekranın tamamındaki her yazıyı sürekli çevirmek bu �
 - Oyun kapanırsa uygulama bekleme durumuna dönecek ve yeniden açıldığında tekrar bağlanacak.
 - EVE arka plandayken OCR ve çeviri duracak.
 
+0.4a uygulamasında bunun ilk, TCC gerektirmeyen katmanı tamamlanmıştır. `GameApplicationProfile.eveOnline`, EVE süreç adayını yalnız tam `com.ccpgames.eveonline` paket kimliği ve `EVE` çalıştırılabilir adıyla kabul eder; launcher için `com.ccpgames.eve-online-launcher` ayrı bekleme durumu üretir. Bu metaveri eşleşmesi yayıncı kod imzasını kanıtlamaz. `NSWorkspace` açılma, kapanma ve etkinleşme bildirimleri sürekli polling yerine anlık yenileme sağlar. Birden fazla eşleşen istemcide yalnız tek öndeki aday seçilir, aksi durumda sonuç belirsiz kalır. Seçilen PID sonraki ScreenCaptureKit pencere sahibi eşleşmesinde güncel süreç kimliğiyle yeniden doğrulanacaktır.
+
 ### 4.2 Normal ve tam ekran yakalama
 
 Önce ScreenCaptureKit'in EVE'ye ait pencere yüzeyi kullanılacak. Tam ekran modunda ayrı pencere yüzeyi alınamıyorsa EVE uygulamasına filtrelenmiş ekran yakalama yolu denenecek. Normal pencere, macOS tam ekran Space'i, farklı çözünürlükler ve çoklu ekran kullanımı gerçek oyunda ayrı ayrı doğrulanacak.

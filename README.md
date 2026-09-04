@@ -2,7 +2,7 @@
 
 EVE Online Çeviri TR, macOS üzerinde çalışan yerel bir oyun ekranı çeviri yardımcısıdır. Öncelikli amacı, çalışan EVE Online istemcisini otomatik bulmak ve oyuncu sol Command tuşuna bastığında farenin yakınındaki İngilizce metni Türkçeye çevirip özgün İngilizce yazıyı kapatmadan yanında tek, okunaklı bir panelde göstermektir.
 
-> **Mevcut durum: Geliştirme aşaması 0.3, izin koordinatörü hazır.** Derlenebilir macOS SwiftUI projesi, küçük tanıtım/durum penceresi ve Ekran Kaydı ile Giriş İzleme durumlarını salt-okunur kontrol eden izin katmanı Xcode'da doğrulanmıştır. Sistem izin isteği yalnız kullanıcı ilgili düğmeye basarsa açılabilir. EVE'yi otomatik bulma, ekran yakalama akışı, sol Command tetikleyicisi, OCR, çeviri ve oyun yanında gösterilecek panel henüz uygulanmadı. Aşama numarası uygulamanın pazarlama sürümü değildir.
+> **Mevcut durum: Geliştirme aşaması 0.4a, EVE süreç algılama hazır.** Derlenebilir macOS SwiftUI projesi, izin koordinatörü ve ekran izni istemeden çalışan tam kimlik alanı eşleşmeli EVE süreç izleyicisi Xcode'da doğrulanmıştır. Uygulama açılma, kapanma ve etkinleşme bildirimlerinde durumu yeniler; launcher'ı oyun istemcisi saymaz. Bu metaveri eşleşmesi yayıncı kod imzasını kanıtlamaz; süreç sonraki pencere eşlemesinde yeniden doğrulanacaktır. ScreenCaptureKit pencere eşlemesi, ekran yakalama akışı, sol Command tetikleyicisi, OCR, çeviri ve oyun yanında gösterilecek panel henüz uygulanmadı. Aşama numarası uygulamanın pazarlama sürümü değildir.
 
 ## Değişmez çalışma biçimi
 
@@ -27,7 +27,13 @@ Uygulamanın 420 × 680 punto boyutundaki ana penceresi i-Panel benzeri kompakt 
 2. Ortada gerçek durum gösteren izin ve hazırlık satırları.
 3. Altta üç kısa kurulum ve kullanım adımı.
 
-0.3 aşamasında Ekran Kaydı ve Giriş İzleme satırları gerçek macOS durumuna göre **Eksik**, **Ayar Gerekiyor**, **Yeniden Aç** veya **İzin Hazır** gösterir. **İzin İste** ve **Ayarları Aç** eylemleri birbirinden bağımsızdır; uygulama açılışında yalnız salt-okunur kontrol yapılır. Türkçe model ile EVE'yi otomatik bulma satırları kendi aşamaları gelene kadar **Sırada** kalır.
+Ekran Kaydı ve Giriş İzleme satırları gerçek macOS durumuna göre **Eksik**, **Ayar Gerekiyor**, **Yeniden Aç** veya **İzin Hazır** gösterir. **İzin İste** ve **Ayarları Aç** eylemleri birbirinden bağımsızdır; uygulama açılışında yalnız salt-okunur kontrol yapılır. EVE satırı gerçek süreç envanterine göre **Bekleniyor**, **Launcher Açık**, **EVE Bulundu** veya **Seçim Gerekiyor** durumunu gösterir. Türkçe model kendi aşaması gelene kadar **Sırada** kalır.
+
+## Otomatik EVE süreç algılama
+
+0.4a katmanı çalışan uygulamaları `NSWorkspace` ile salt okunur izler. Bir EVE süreç adayı yalnız `com.ccpgames.eveonline` paket kimliği ile `EVE` çalıştırılabilir adı birlikte tam eşleştiğinde kabul edilir. `com.ccpgames.eve-online-launcher`, launcher yardımcıları, Steam kısayolu, bu uygulamanın kendisi ve yalnız adında “EVE” geçen başka süreçler hedef seçilmez.
+
+Sürekli hızlı tarama yapılmaz; uygulama açılma, kapanma ve etkinleşme bildirimlerinde anlık envanter yenilenir. Birden fazla eşleşen EVE süreç adayında yalnız tek bir istemci öndeyse onun PID'si seçilir, aksi durumda rastgele seçim yapılmaz. Bu PID tek başına kalıcı veya kriptografik bir kimlik sayılmaz; sonraki ScreenCaptureKit pencere eşlemesinde güncel paket kimliği ve pencere sahibiyle yeniden çapraz doğrulanacaktır. Bu aşamada EVE veya launcher başlatılmamış, ekran envanteri alınmamış ve macOS izin istemi açılmamıştır.
 
 ## Gerekli izinler ve nedenleri
 

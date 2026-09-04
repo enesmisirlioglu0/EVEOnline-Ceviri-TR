@@ -2,6 +2,31 @@
 
 Bu dosya yalnızca tamamlanan ve doğrulanan değişiklikleri kaydeder. Planlanan özellikler değişiklik olarak yazılmaz.
 
+## Geliştirme aşaması 0.4a — 2026-09-04
+
+### Eklendi
+
+- Başka oyun profillerine genişleyebilen tam kimlik alanlı `GameApplicationProfile` değeri ve EVE profili
+- Çalışan uygulamaları Ekran Kaydı izni istemeden değer tipi anlık görüntülere dönüştüren `NSWorkspace` sağlayıcısı
+- EVE süreç adayını yalnız `com.ccpgames.eveonline` paket kimliği ile `EVE` çalıştırılabilir adı birlikte eşleştiğinde kabul eden saf eşleştirici; bu metaveri eşleşmesi yayıncı imzası doğrulaması değildir
+- Launcher'ı, yardımcı süreçleri, Steam kısayolunu, çeviri uygulamasının kendisini ve bulanık ad benzerliklerini dışlayan kurallar
+- Uygulama açılma, kapanma ve etkinleşme bildirimleriyle çalışan; sürekli tarama yapmayan süreç monitörü
+- Tek eşleşen istemci adayını PID'siyle seçme; çoklu adayda yalnız tek öndeki adayı kabul etme ve rastgele seçimden kaçınma
+- Arayüzde **Bekleniyor**, **Launcher Açık**, **EVE Bulundu** ve **Seçim Gerekiyor** durumları
+
+### Doğrulandı
+
+- Debug derlemesi ve Xcode Analyze başarıyla tamamlandı.
+- Güncel sahte süreç sağlayıcılı matcher/monitor harness'i; kesin oyun/launcher kimliği, yanlış eşleşmeler, sonlandırılmış süreçler, çoklu istemci seçimi, farklı oyun profili, idempotent başlatma/durdurma, bildirim güncellemesi ve gözlemci iptali dahil 25 kontrolü geçti.
+- `LaunchViewModel` entegrasyon harness'i; başlatma, ilk durum aktarımı, launcher ve seçilen PID güncellemesi, yenileme, durdurma ve callback bırakma dahil 11 kontrolü geçti.
+- Xcode'dan çalışan uygulama, EVE kapalıyken gerçek `NSWorkspace` envanterinden **Bekleniyor** sonucunu üretti.
+- Süreç algılama klasöründe polling, uygulama başlatma, ScreenCaptureKit veya TCC istek çağrısı bulunmadığı doğrulandı.
+
+### Canlı doğrulama bekliyor
+
+- EVE veya launcher bu aşamada başlatılmadı. Gerçek açılma, kapanma, öne gelme ve çoklu istemci turu kullanıcı açıkça onayladığında ayrıca denenecek.
+- ScreenCaptureKit pencere envanteri ve seçilen PID'nin pencere sahibiyle çapraz doğrulanması 0.4'ün sonraki alt adımıdır.
+
 ## Geliştirme aşaması 0.3 — 2026-09-04
 
 ### Eklendi

@@ -39,12 +39,17 @@ Durum işaretleri:
 
 ## 0.4 — EVE'yi otomatik bulma
 
+- ✅ `GameApplicationProfile` ile EVE'nin tam oyun ve launcher kimlik alanlarını birbirinden ayır
+- ✅ `NSWorkspace` süreç envanterini ekran izni istemeden ve uygulama başlatmadan salt okunur al
+- ✅ Yalnız tam `com.ccpgames.eveonline` + `EVE` eşleşmesini kabul et; launcher, helper, Steam kısayolu ve bulanık ad eşleşmelerini dışla
+- ✅ Uygulama açılma, kapanma ve etkinleşme bildirimleriyle polling yapmadan durumu yenile
+- ✅ Tek istemcide PID'yi seç; çoklu istemcide yalnız tek öndeki adayı kabul et ve belirsizlikte rastgele seçim yapma
+- ✅ **Bekleniyor**, **Launcher Açık**, **EVE Bulundu** ve **Seçim Gerekiyor** süreç durumlarını kompakt arayüze bağla
 - ⏳ `SCShareableContent` ile çalışan uygulama ve pencere envanterini al
-- ⏳ EVE oyun istemcisini uygulama kimliği, işlem ve pencere sahibi bilgileriyle otomatik eşleştir
-- ⏳ EVE Launcher, giriş ve hesap pencerelerini dışla
-- ⏳ Birden fazla istemcide öndeki EVE'yi seç; yalnız belirsizlikte küçük bir kullanıcı seçimi sun
-- ⏳ EVE kapanınca bekle ve tekrar açıldığında otomatik yeniden bağlan
+- ⏳ Seçilen PID'yi ScreenCaptureKit pencere sahibi bilgisiyle çapraz doğrula; launcher, giriş ve hesap pencerelerini dışla
+- ⏳ Belirsizlik sürerse küçük kullanıcı seçimini ekle
 - ⏳ EVE arka plandayken ağır işlemleri durdur
+- ⏳ Kullanıcı açıkça onayladığında gerçek EVE açılma, kapanma ve öne gelme turunu bu Mac'te doğrula
 
 ## 0.5 — Normal ve tam ekran görüntü takibi
 
