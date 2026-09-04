@@ -2,6 +2,31 @@
 
 Bu dosya yalnızca tamamlanan ve doğrulanan değişiklikleri kaydeder. Planlanan özellikler değişiklik olarak yazılmaz.
 
+## Geliştirme aşaması 0.4b — 2026-09-04
+
+### Eklendi
+
+- `NSRunningApplication.launchDate` değerini süreç nesli ayırımı için taşıyan salt-değer süreç descriptor'ı; tarih yoksa önceki seçimi yeniden kullanmayan güvenli davranış
+- Ham `SCWindow`, `SCRunningApplication` ve `SCDisplay` nesnelerini uygulamanın diğer katmanlarına taşımayan `Sendable` değer snapshot'ları
+- Ekran Kaydı izni yoksa gerçek yükleyiciye hiç ulaşmayan ScreenCaptureKit sağlayıcı kapısı
+- Yalnız istenen PID + paket kimliğine ait ekranda görünen pencereleri saklayan hedefe özel payload; başka uygulamaların pencere başlığı ve görünen adı kopyalanmaz
+- Snapshot'ın hangi süreç niyetiyle üretildiğini taşıyan tam `GameProcessIdentity` ve yanlış süreç snapshot'ını kapalı biçimde reddeden kontrol
+- Owner PID + paket kimliği, kendisine verilen descriptor'daki executable/öndelik durumu, pencere katmanı, görünürlük, sonlu geometri, minimum ölçü ve çoklu ekran kesişimini denetleyen saf `GameWindowMatcher`
+- Büyük ana pencereyi küçük yardımcı adaydan önceleyen, yakın eşitlikte tek aktif aday yoksa belirsizlik üreten ve dizi sırasına göre rastgele seçim yapmayan kurallar
+- Aynı süreç neslindeki yeterince büyük önceki pencereyi koruma ve yalnız tanılama amaçlı geometrik normal/tam ekran sınıflaması
+
+### Doğrulandı
+
+- Debug derlemesi, Xcode Analyze ve `SWIFT_VERSION=6` ile sıkı eşzamanlılık/uyarıları hata sayan derleme başarıyla tamamlandı.
+- Hedefe özel sahte sağlayıcı ve saf matcher harness'i; kimlik, izin kapısı, yanlış snapshot, bozuk/görünmez geometri, çoklu ekran, ana pencere/modal sıralaması, belirsizlik, süreç nesli, önceki seçim, tam ekran çıkarımı, dizi sırası bağımsızlığı ve generation davranışı dahil 64 kontrolü geçti.
+- İzin reddinde sahte payload yükleyicisinin çağrı sayısının `0` kaldığı ve hedef süreç bilgisinin yükleyiciye aktarılmadığı doğrulandı.
+- Güncel kod incelemesinde ScreenCaptureKit nesnesi sızıntısı, uygulama yaşam döngüsünden canlı sağlayıcı çağrısı veya istemsiz TCC isteği bulunmadı.
+
+### Canlı doğrulama bekliyor
+
+- Sağlayıcı ve eşleştirici henüz uygulama yaşam döngüsüne bağlı değildir; gerçek `SCShareableContent` çağrısı yapılmamış ve EVE penceresi canlı seçilmemiştir.
+- Asenkron envanterin öncesi ve sonrasında güncel süreç/öndelik doğrulaması, eski sonuçları iptal eden koordinatör ve canlı tam ekran EVE turu sonraki adımlardır.
+
 ## Geliştirme aşaması 0.4a — 2026-09-04
 
 ### Eklendi

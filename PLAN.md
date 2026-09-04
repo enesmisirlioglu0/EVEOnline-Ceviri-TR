@@ -55,6 +55,8 @@ Sabit alan seçimi ve ekranın tamamındaki her yazıyı sürekli çevirmek bu �
 
 Önce ScreenCaptureKit'in EVE'ye ait pencere yüzeyi kullanılacak. Tam ekran modunda ayrı pencere yüzeyi alınamıyorsa EVE uygulamasına filtrelenmiş ekran yakalama yolu denenecek. Normal pencere, macOS tam ekran Space'i, farklı çözünürlükler ve çoklu ekran kullanımı gerçek oyunda ayrı ayrı doğrulanacak.
 
+0.4b uygulamasında canlı bağlantıdan önceki güvenli altyapı tamamlanmıştır. Ham ScreenCaptureKit nesneleri yalnız sağlayıcının izolasyon alanında kalır ve hedef PID + paket kimliğine ait, ekranda görünen pencere değerleri `Sendable` snapshot'a dönüştürülür. Pencere başlıkları ve başka uygulamaların görünen adları saklanmaz. İzin kapısı erişim yokken yükleyiciyi çağırmaz. Saf eşleştirici owner PID + paket kimliğini, kendisine verilen EVE süreç descriptor'ındaki kimlik/öndelik durumunu, görünür geometriyi, layer bilgisini, çoklu ekran kesişimini ve aynı süreç neslindeki önceki seçimi değerlendirir; yakın eşitlikte rastgele seçim yapmaz. Bu kod henüz uygulama yaşam döngüsünden çağrılmadığı için gerçek ScreenCaptureKit envanteri alınmış veya EVE penceresi canlı bulunmuş sayılmaz. Sonraki koordinatör envanterin iki yanında güncel süreci yeniden doğrulayacak ve eski asenkron sonuçları istek belirteciyle atacaktır.
+
 “Tam ekranda çalışır” hedefi ürüne dâhildir; ancak her oyun ve macOS sürümündeki tam ekran davranışı aynı olmadığından bu özellik gerçek EVE testi geçmeden tamamlanmış sayılmayacaktır.
 
 ## 5. Sol Command tetikleyicisi

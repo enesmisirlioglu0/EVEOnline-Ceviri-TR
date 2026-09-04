@@ -2,7 +2,7 @@
 
 EVE Online Çeviri TR, macOS üzerinde çalışan yerel bir oyun ekranı çeviri yardımcısıdır. Öncelikli amacı, çalışan EVE Online istemcisini otomatik bulmak ve oyuncu sol Command tuşuna bastığında farenin yakınındaki İngilizce metni Türkçeye çevirip özgün İngilizce yazıyı kapatmadan yanında tek, okunaklı bir panelde göstermektir.
 
-> **Mevcut durum: Geliştirme aşaması 0.4a, EVE süreç algılama hazır.** Derlenebilir macOS SwiftUI projesi, izin koordinatörü ve ekran izni istemeden çalışan tam kimlik alanı eşleşmeli EVE süreç izleyicisi Xcode'da doğrulanmıştır. Uygulama açılma, kapanma ve etkinleşme bildirimlerinde durumu yeniler; launcher'ı oyun istemcisi saymaz. Bu metaveri eşleşmesi yayıncı kod imzasını kanıtlamaz; süreç sonraki pencere eşlemesinde yeniden doğrulanacaktır. ScreenCaptureKit pencere eşlemesi, ekran yakalama akışı, sol Command tetikleyicisi, OCR, çeviri ve oyun yanında gösterilecek panel henüz uygulanmadı. Aşama numarası uygulamanın pazarlama sürümü değildir.
+> **Mevcut durum: Geliştirme aşaması 0.4b, güvenli pencere eşleştirme altyapısı hazır.** 0.4a'nın çalışan EVE süreç izleyicisine ek olarak izin kapılı, hedefe özel ScreenCaptureKit değer snapshot'ı ve saf pencere eşleştiricisi derlenip sahte bağımlılıklarla doğrulanmıştır. Bu altyapı henüz uygulama yaşam döngüsüne bağlanmamış ve gerçek ScreenCaptureKit envanteri çağrılmamıştır. Ekran yakalama akışı, sol Command tetikleyicisi, OCR, çeviri ve oyun yanında gösterilecek panel henüz uygulanmadı. Aşama numarası uygulamanın pazarlama sürümü değildir.
 
 ## Değişmez çalışma biçimi
 
@@ -35,6 +35,14 @@ Ekran Kaydı ve Giriş İzleme satırları gerçek macOS durumuna göre **Eksik*
 
 Sürekli hızlı tarama yapılmaz; uygulama açılma, kapanma ve etkinleşme bildirimlerinde anlık envanter yenilenir. Birden fazla eşleşen EVE süreç adayında yalnız tek bir istemci öndeyse onun PID'si seçilir, aksi durumda rastgele seçim yapılmaz. Bu PID tek başına kalıcı veya kriptografik bir kimlik sayılmaz; sonraki ScreenCaptureKit pencere eşlemesinde güncel paket kimliği ve pencere sahibiyle yeniden çapraz doğrulanacaktır. Bu aşamada EVE veya launcher başlatılmamış, ekran envanteri alınmamış ve macOS izin istemi açılmamıştır.
 
+## Güvenli pencere eşleştirme altyapısı
+
+0.4b katmanı ham `SCWindow`, `SCRunningApplication` ve `SCDisplay` nesnelerini uygulamanın diğer bölümlerine taşımaz. ScreenCaptureKit sağlayıcısı bunları kendi izolasyon alanında yalnız süreç kimliği, geometri ve sınırlı pencere durumu içeren değişmez `Sendable` değerlere dönüştürür. Canlı yükleyici Ekran Kaydı izni yoksa envanter çağrısına ulaşmadan durur ve kendisi izin istemez.
+
+Snapshot hedef sürece özeldir: yalnız istenen PID + paket kimliğine ait ekranda görünen pencere değerleri saklanır; başka uygulamaların pencere başlıkları veya görünen adları kopyalanmaz. Saf eşleştirici kendisine verilen EVE süreç descriptor'ındaki paket/çalıştırılabilir kimliği ile öndelik durumunu, ScreenCaptureKit tarafında da owner PID + paket kimliğini birlikte denetler. Sahipsiz, yanlış katmanlı, görünmeyen, bozuk geometrili veya çok küçük pencereleri eler; yakın eşitlikte rastgele seçim yapmak yerine belirsizlik üretir. Önceki pencere yalnız aynı, `launchDate` ile ayırt edilebilen süreç neslinde ve hâlâ yeterince büyük/görünürse korunur. `launchDate` yoksa eski seçim tekrar kullanılmaz.
+
+Tam ekran etiketi şimdilik yalnız pencere ile ekran geometrisinin örtüşmesine dayanan tanısal bir çıkarımdır; macOS tam ekran Space desteğinin canlı kanıtı değildir. Sağlayıcı ve eşleştirici henüz `LaunchViewModel` veya uygulama yaşam döngüsünden çağrılmaz. Asenkron envanter öncesi ve sonrası güncel süreç/öndelik kontrolü ile eski sonuçları iptal edecek koordinatör sonraki alt adımdır. Bu tamamlanmadan “EVE penceresi uygulamada otomatik bulunuyor” iddiası yapılmaz.
+
 ## Gerekli izinler ve nedenleri
 
 | İzin / hazırlık | Neden gerekli? | Sınır |
@@ -51,7 +59,7 @@ Planlanan ScreenCaptureKit kullanımı için Apple belgelerinde belirtilen `NSSc
 
 - Native macOS, Swift ve SwiftUI
 - Minimum macOS 15.0
-- ScreenCaptureKit ile otomatik bulunan oyun penceresi veya tam ekran oyun yüzeyi
+- İzin kapılı ScreenCaptureKit değer snapshot'ı ve saf pencere eşleştirme altyapısı; canlı oyun yüzeyi bağlantısı sonraki adımda
 - Vision ile cihaz üzerinde OCR
 - Değiştirilebilir `TranslationEngine` yapısı; ilk motor Apple Translation
 - Sol Command için yalnızca dinleyen global giriş gözlemcisi
