@@ -18,7 +18,7 @@ Bu dosya yalnızca tamamlanan ve doğrulanan değişiklikleri kaydeder. Planlana
 
 ### Doğrulandı
 
-- Gerçek EVE sürecinin güvenli `NSRunningApplication` alanlarında paket kimliği `com.ccpgames.eveonline`, çalışma adı `exefile`, dolu `launchDate` ve arka plan durumu gözlendi. Oyun pikselleri yakalanmadı; süreç argümanları, tam kullanıcı yolu ve ham kimlik değerleri depoya veya kullanıcı belgelerine yazılmadı.
+- Gerçek EVE sürecinin güvenli `NSRunningApplication` alanlarında paket kimliği `com.ccpgames.eveonline`, çalışma adı `exefile`, dolu `launchDate` ve arka plan durumu gözlendi. Oyun pikselleri yakalanmadı; süreç argümanları ve tam kullanıcı yolu depoya veya kullanıcı belgelerine yazılmadı.
 - Exact `EVE`/`exefile` pozitifleri; benzer ad, helper, yanlış paket, görünen ad, sonlandırılmış süreç, Launcher-only, çoklu istemci ve snapshot çalışma adı uyuşmazlığı negatiflerini kapsayan Swift 6 strict harness'i 21 senaryo ve 22/22 kontrolden dört ardışık turda geçti.
 - Önceki tam 0.4d sahte entegrasyon harness'i, varsayılan gerçek istemci adı `exefile` olacak biçimde yeniden derlendi; izin/öndelik kapıları, süreç izleme, çözümleyici, iptal ve eski sonuç yollarının tamamı 36 senaryo ve 137/137 kontrolden dört ardışık turda geçti.
 - Debug derlemesi, Xcode Analyze ve `SWIFT_VERSION=6` tam sıkı eşzamanlılık/uyarıları hata sayan proje derlemesi başarılı oldu; bağımsız mimari ve UI incelemeleri engelleyici bulgu olmadan **GO** verdi.
